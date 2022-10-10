@@ -5,14 +5,6 @@
 #include <errno.h>
 #include <immintrin.h>
 
-int is_valid(int num){
-    if (num%8==0){
-        return 1;
-    }
-    else{
-        return 0;
-    }
-}
 
 void print_matrix(s_matrix * matrix, int n){
 
@@ -68,13 +60,13 @@ void test(char * string_scalar, char * string_width_a, char * string_height_a, c
   int num_threads = atoi(string_num_threads);
 
 
-  if(!(is_valid(width_a) && is_valid(width_b) && is_valid(height_a) && is_valid(height_b))){
-    printf("Dimensão não é múltiplo de 8\n");
+  if(!(width_a % 8 == 0 && height_a % num_threads % 8 == 0)){
+    printf("Dimensões inválidas\n");
     exit(1);
   }
 
   
-  struct timeval start, stop;
+  struct timeval start, stop, partial;
 
   FILE * a1 = fopen(arq1, "r");
   FILE * a2 = fopen(arq2, "r");
@@ -106,18 +98,18 @@ void test(char * string_scalar, char * string_width_a, char * string_height_a, c
   set_number_threads(num_threads);
   gettimeofday(&start, NULL);
   scalar_matrix_mult(scalar, matrix_a);
-  gettimeofday(&stop, NULL);
+  gettimeofday(&partial, NULL);
 
   printf("Time for scalar mult: %.2fms\n",   
-  timedifference_msec(start, stop));
+  timedifference_msec(start, partial));
   write_matrix(matrix_a, a3);
+  gettimeofday(&partial, NULL);
 
-  gettimeofday(&start, NULL);
   f(matrix_a, matrix_b, matrix_c);
   gettimeofday(&stop, NULL);
   printf("Time for matrix mult: %.2fms\n", 
-  timedifference_msec(start, stop));
-
+  timedifference_msec(partial, stop));
+  printf("Total time: %.2fms\n", timedifference_msec(start, stop));
   print_matrix(matrix_c, 8);
   
   write_matrix(matrix_c, a4);
