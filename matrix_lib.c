@@ -75,6 +75,9 @@ void * wrapper_scalar(void * par){
 }
 
 int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matrix_c){
+  if(matrix_a == NULL || matrix_b == NULL || matrix_c == NULL){
+    return 0;
+  }
   pthread_t threads[NUM_THREADS];
   p_m *parametros[NUM_THREADS];
   int i;
@@ -93,10 +96,13 @@ int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matri
     pthread_join(threads[i], NULL);
     free(parametros[i]);
   }
-  return 0;
+  return 1;
 }
 
 int scalar_matrix_mult(float scalar_value, struct matrix *matrix){
+  if(matrix == NULL){
+    return 0;
+  }
   pthread_t threads[NUM_THREADS];
   p_s *parametros[NUM_THREADS];
   int size = matrix->height * matrix->width;
@@ -116,5 +122,5 @@ int scalar_matrix_mult(float scalar_value, struct matrix *matrix){
     pthread_join(threads[i], NULL);
     free(parametros[i]);
   }
-  return 0;
+  return 1;
 }
