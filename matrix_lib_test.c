@@ -59,13 +59,13 @@ void fill_matrix(s_matrix * matrix, int num){
   }
 }
 
-void test(char * string_scalar, char * string_width_a, char * string_height_a, char * string_width_b, char * string_height_b, char * arq1, char * arq2, char * arq3, char * arq4, int (f)(struct matrix *matrix_a, struct matrix * matrix_b, struct matrix * matrix_c)){
+void test(char * string_scalar, char * string_width_a, char * string_height_a, char * string_width_b, char * string_height_b, char * string_num_threads, char * arq1, char * arq2, char * arq3, char * arq4, int (f)(struct matrix *matrix_a, struct matrix * matrix_b, struct matrix * matrix_c)){
   float scalar = atof(string_scalar);
   int width_a = atoi(string_width_a);
   int height_a = atoi(string_height_a);
   int width_b = atoi(string_width_b);
   int height_b = atoi(string_height_b);
-
+  int num_threads = atoi(string_num_threads);
 
 
   if(!(is_valid(width_a) && is_valid(width_b) && is_valid(height_a) && is_valid(height_b))){
@@ -103,7 +103,7 @@ void test(char * string_scalar, char * string_width_a, char * string_height_a, c
 
   fill_matrix(matrix_c, 0);
 
-  set_number_threads(8);
+  set_number_threads(num_threads);
   gettimeofday(&start, NULL);
   scalar_matrix_mult(scalar, matrix_a);
   gettimeofday(&stop, NULL);
@@ -133,6 +133,6 @@ void test(char * string_scalar, char * string_width_a, char * string_height_a, c
 }
 
 int main(int argc, char * argv[]){
-  test(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], matrix_matrix_mult);
+  test(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10], matrix_matrix_mult);
   return 0;
 }
