@@ -66,13 +66,13 @@ void test(char * string_scalar, char * string_width_a, char * string_height_a, c
   int width_b = atoi(string_width_b);
   int height_b = atoi(string_height_b);
 
-/*
+
 
   if(!(is_valid(width_a) && is_valid(width_b) && is_valid(height_a) && is_valid(height_b))){
     printf("Dimensão não é múltiplo de 8\n");
     exit(1);
   }
-*/
+
   
   struct timeval start, stop;
 

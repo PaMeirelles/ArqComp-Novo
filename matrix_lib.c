@@ -8,7 +8,21 @@
 
 #define NUM_THREADS 8
 
-void aux(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linha){
+int aux_scalar(s_matrix * matrix, int inicio, int fim, float scalar){
+    if(matrix == NULL){
+    return 1;
+  }
+  __m256 a = _mm256_set1_ps(scalar);
+  __m256 b;
+  for(int i=inicio; i < fim; i += 8){
+    b = _mm256_load_ps(matrix->rows+i);
+    b = _mm256_mul_ps(a, b);
+    _mm256_store_ps(matrix->rows+i, b);
+  }
+  return 0;
+}
+
+void aux_mm_mult(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linha){
   long counter = 0;
   float * pointer_a = matrix_a->rows;
   float * pointer_b = matrix_b->rows;
@@ -45,27 +59,34 @@ void aux(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linh
  }
 }
 
-void * wrapper(void * par){
-  p * parametros = (p*)par;
-  aux(parametros->matrix_a,
+void * wrapper_mm_mult(void * par){
+  p_m * parametros = (p_m*)par;
+  aux_mm_mult(parametros->matrix_a,
       parametros->matrix_b,
       parametros->matrix_c, 
       parametros->linha);
     pthread_exit(0);
 }
+
+void * wrapper_scalar(void * par){
+  p_s * parametros = (p_s*)par;
+  aux_scalar(parametros->matrix, parametros->inicio, parametros->fim, parametros->scalar);
+  pthread_exit(0);
+}
+
 int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matrix_c){
   pthread_t threads[NUM_THREADS];
-  p *parametros[NUM_THREADS];
+  p_m *parametros[NUM_THREADS];
   int i;
   for(i = 0; i < NUM_THREADS; i++){
-    parametros[i] = (p*)malloc(sizeof(p));
+    parametros[i] = (p_m*)malloc(sizeof(p_m));
 
     parametros[i]->matrix_a = matrix_a;
     parametros[i]->matrix_b = matrix_b;
     parametros[i]->matrix_c = matrix_c;
     parametros[i]->linha = i * (matrix_a->height / NUM_THREADS);
 
-    pthread_create(&threads[i], NULL, wrapper, (void *)parametros[i]); 
+    pthread_create(&threads[i], NULL, wrapper_mm_mult, (void *)parametros[i]); 
   }
 
   for(i = 0; i < NUM_THREADS; i++){
@@ -76,16 +97,24 @@ int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matri
 }
 
 int scalar_matrix_mult(float scalar_value, struct matrix *matrix){
-  if(matrix == NULL){
-    return 1;
+  pthread_t threads[NUM_THREADS];
+  p_s *parametros[NUM_THREADS];
+  int size = matrix->height * matrix->width;
+  int i;
+  for(i = 0; i < NUM_THREADS; i++){
+    parametros[i] = (p_s*)malloc(sizeof(p_s));
+
+    parametros[i]->matrix = matrix;
+    parametros[i]->inicio = i * (size/NUM_THREADS);
+    parametros[i]->fim = (i+1) * (size/NUM_THREADS);
+    parametros[i]->scalar = scalar_value;
+
+    pthread_create(&threads[i], NULL, wrapper_scalar, (void *)parametros[i]); 
   }
-  __m256 a = _mm256_set1_ps(scalar_value);
-  __m256 b;
-  int size = matrix->width * matrix->height;
-  for(int i=0; i < size; i += 8){
-    b = _mm256_load_ps(matrix->rows+i);
-    b = _mm256_mul_ps(a, b);
-    _mm256_store_ps(matrix->rows+i, b);
+
+  for(i = 0; i < NUM_THREADS; i++){
+    pthread_join(threads[i], NULL);
+    free(parametros[i]);
   }
   return 0;
 }
