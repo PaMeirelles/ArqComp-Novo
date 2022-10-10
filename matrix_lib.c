@@ -9,7 +9,7 @@
 #define NUM_THREADS 8
 
 void aux(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linha){
-    long counter = 0;
+  long counter = 0;
   float * pointer_a = matrix_a->rows;
   float * pointer_b = matrix_b->rows;
   float * pointer_c = matrix_c->rows;
@@ -20,10 +20,11 @@ void aux(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linh
 
   pointer_a += linha * ha;
   pointer_c += linha * ha;
+
   __m256 a = _mm256_set1_ps(*pointer_a);
   __m256 b;
   __m256 c;
- while(counter < ha * wb * hb){
+ while(counter < (ha * wb * hb) / NUM_THREADS){
   counter += 8;
 
   b = _mm256_load_ps(pointer_b);
@@ -40,23 +41,25 @@ void aux(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linh
   if (counter % size == 0){
     pointer_b -= size;
     pointer_c += wb;
+    pointer_a += NUM_THREADS * hb;
 
   }
  }
 }
 
-void wrapper(p * par){
+void * wrapper(void * par){
   p * parametros = (p*)par;
   aux(parametros->matrix_a,
       parametros->matrix_b,
       parametros->matrix_c, 
       parametros->linha);
+
+    pthread_exit(0);
 }
 int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matrix_c){
   pthread_t threads[NUM_THREADS];
   p *parametros[NUM_THREADS];
   int i;
-
   for(i = 0; i < NUM_THREADS; i++){
     parametros[i] = (p*)malloc(sizeof(p));
 
@@ -65,15 +68,16 @@ int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matri
     parametros[i]->matrix_c = matrix_c;
     parametros[i]->linha = i;
 
-    pthread_create(&threads[i], NULL, wrapper, (void *)parametros[i]);
+    pthread_create(&threads[i], NULL, wrapper, (void *)parametros[i]); 
   }
 
   for(i = 0; i < NUM_THREADS; i++){
     pthread_join(threads[i], NULL);
-
     free(parametros[i]);
   }
+  return 0;
 }
+
 int scalar_matrix_mult(float scalar_value, struct matrix *matrix){
   if(matrix == NULL){
     return 1;
