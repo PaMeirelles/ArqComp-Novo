@@ -103,6 +103,7 @@ void test(char * string_scalar, char * string_width_a, char * string_height_a, c
 
   fill_matrix(matrix_c, 0);
 
+  set_number_threads(8);
   gettimeofday(&start, NULL);
   scalar_matrix_mult(scalar, matrix_a);
   gettimeofday(&stop, NULL);
