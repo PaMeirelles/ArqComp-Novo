@@ -49,10 +49,12 @@ void aux(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linh
 
 void * wrapper(void * par){
   p * parametros = (p*)par;
+  printf("entra %d\n", parametros->linha);
   aux(parametros->matrix_a,
       parametros->matrix_b,
       parametros->matrix_c, 
       parametros->linha);
+  printf("sai %d\n", parametros->linha);
 
     pthread_exit(0);
 }
