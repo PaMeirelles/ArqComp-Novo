@@ -1,0 +1,61 @@
+Architecture:                    x86_64
+CPU op-mode(s):                  32-bit, 64-bit
+Byte Order:                      Little Endian
+Address sizes:                   48 bits physical, 48 bits virtual
+CPU(s):                          8
+On-line CPU(s) list:             0-7
+Thread(s) per core:              2
+Core(s) per socket:              4
+Socket(s):                       1
+Vendor ID:                       AuthenticAMD
+CPU family:                      23
+Model:                           24
+Model name:                      AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx  
+Stepping:                        1
+CPU MHz:                         2095.986
+BogoMIPS:                        4191.97
+Virtualization:                  AMD-V
+Hypervisor vendor:               Microsoft
+Virtualization type:             full
+L1d cache:                       128 KiB
+L1i cache:                       256 KiB
+L2 cache:                        2 MiB
+L3 cache:                        4 MiB
+Vulnerability Itlb multihit:     Not affected
+Vulnerability L1tf:              Not affected
+Vulnerability Mds:               Not affected
+Vulnerability Meltdown:          Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled v
+                                 ia prctl and seccomp
+Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user
+                                  pointer sanitization
+Vulnerability Spectre v2:        Mitigation; Full AMD retpoline, IBPB conditiona
+                                 l, STIBP disabled, RSB filling
+Vulnerability Srbds:             Not affected
+Vulnerability Tsx async abort:   Not affected
+Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtr
+                                 r pge mca cmov pat pse36 clflush mmx fxsr sse s
+                                 se2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtsc
+                                 p lm constant_tsc rep_good nopl tsc_reliable no
+                                 nstop_tsc cpuid extd_apicid pni pclmulqdq ssse3
+                                  fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave 
+                                 avx f16c rdrand hypervisor lahf_lm cmp_legacy s
+                                 vm cr8_legacy abm sse4a misalignsse 3dnowprefet
+                                 ch osvw topoext ssbd ibpb vmmcall fsgsbase bmi1
+                                  avx2 smep bmi2 rdseed adx smap clflushopt sha_
+                                 ni xsaveopt xsavec xgetbv1 xsaves clzero xsavee
+                                 rptr virt_ssbd arat npt nrip_save tsc_scale vmc
+                                 b_clean flushbyasid decodeassists pausefilter p
+                                 fthreshold v_vmsave_vmload
+
+Primeiro teste(1024 x 1024):
+Time for scalar mult: 5.03ms
+Time for matrix mult: 801.41ms
+Total time: 816.25ms
+103350.00 105605.00 106055.00 102460.00 103535.00 104735.00 103555.00 99460.00  ...
+
+Segundo teste(2048 x 2048):
+Time for scalar mult: 2.89ms
+Time for matrix mult: 6762.60ms
+Total time: 6808.43ms
+206260.00 206595.00 208275.00 209015.00 206660.00 199300.00 207835.00 203225.00 ...
