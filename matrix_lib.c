@@ -41,21 +41,16 @@ void aux(s_matrix * matrix_a, s_matrix * matrix_b, s_matrix * matrix_c, int linh
   if (counter % size == 0){
     pointer_b -= size;
     pointer_c += wb;
-    pointer_a += NUM_THREADS * hb;
-
   }
  }
 }
 
 void * wrapper(void * par){
   p * parametros = (p*)par;
-  printf("entra %d\n", parametros->linha);
   aux(parametros->matrix_a,
       parametros->matrix_b,
       parametros->matrix_c, 
       parametros->linha);
-  printf("sai %d\n", parametros->linha);
-
     pthread_exit(0);
 }
 int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matrix_c){
@@ -68,7 +63,7 @@ int matrix_matrix_mult(s_matrix *matrix_a, s_matrix * matrix_b, s_matrix * matri
     parametros[i]->matrix_a = matrix_a;
     parametros[i]->matrix_b = matrix_b;
     parametros[i]->matrix_c = matrix_c;
-    parametros[i]->linha = i;
+    parametros[i]->linha = i * (matrix_a->height / NUM_THREADS);
 
     pthread_create(&threads[i], NULL, wrapper, (void *)parametros[i]); 
   }
